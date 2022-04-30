@@ -36,17 +36,46 @@ class CertificateRepository extends BaseRepository
 	}
 
 	/**
-	 *	과목 수업 내용
+	 *	과목 수업 주제
 	 *
 	 */
-	public function getSubjectContents($class_idx, $subject_idx)
+	public function getSubjectLabel($subject_idx)
 	{
-		$this->dbInit('contents');
+		$this->dbInit('subject_label');
+
+		return self::$builder
+			->select('idx, comment')
+			->where('subject_idx', $subject_idx)
+			->where('status', 'Y')
+			->get()->getResultArray();
+	}
+
+	/**
+	 *	과목 수업 주제별 내용
+	 *
+	 */
+	public function getSubjectContents($label_idx)
+	{
+		$this->dbInit('content');
 
 		return self::$builder
 			->select('*')
-			->where('class_idx', $class_idx)
-			->where('subject_idx', $subject_idx)
+			->where('label_idx', $label_idx)
+			->where('status', 'Y')
+			->get()->getResultArray();
+	}
+
+	/**
+	 *	특정 단어
+	 *
+	 */
+	public function getWord($idx)
+	{
+		$this->dbInit('word');
+
+		return self::$builder
+			->select('idx, parent_idx, hangul, english, abbreviation, keyword, summary')
+			->where('idx', $idx)
 			->where('status', 'Y')
 			->get()->getResultArray();
 	}
@@ -79,6 +108,20 @@ class CertificateRepository extends BaseRepository
 			->select('idx, content')
 			->where('Word_idx', $word_idx)
 			->where('status', 'Y')
+			->get()->getResultArray();
+	}
+
+	/**
+	 *	연관 단어가 없는 단어
+	 *
+	 */
+	public function getParentWord()
+	{
+		$this->dbInit('word');
+
+		return self::$builder
+			->select('idx, title')
+			->getwhere()
 			->get()->getResultArray();
 	}
 }

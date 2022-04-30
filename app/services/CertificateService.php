@@ -19,22 +19,31 @@ class CertificateService extends BaseService
 		return self::$certificate->getClassListAll();
 	}
 
-	public function getClassStudyContent($seg=false)
+	public function getClassStudyContent($class_idx=0)
 	{
-		if($seg !== false)
+		if($class_idx > 0)
 		{
-			$subject_data = self::$certificate->getSubjectList($seg);
+			// 과목 수업 목록
+			$subject_data = self::$certificate->getSubjectList($class_idx);
 			foreach($subject_data as $subject)
 			{
-				$idx = $subject->idx;
+				$subject_idx = $subject['idx'];
 
-				$list[$idx]['idx'] = $idx;
-				$list[$idx]['title'] = $subject->title;
+				$list[$subject_idx]['idx'] = $subject_idx;
+				$list[$subject_idx]['title'] = $subject['title'];
 
-				$subject_contents = self::$certificate->getSubjectContents($seg, $idx);
-				foreach($subject_contents as $contents)
+				// 수업 주제 ?
+				$subject_labels = self::$certificate->getSubjectLabel($subject_idx);
+				foreach($subject_labels as $label)
 				{
-					$list[$idx]['sub'][] = (Array) $contents;
+					$list[$subject_idx]['list'][$label['idx']]['comment'] = $label['comment'];
+
+					// 주제 내용
+					$subject_contents = self::$certificate->getSubjectContents($lable['idx']);
+					foreach($subject_contents as $contents)
+					{
+						$list[$subject_idx]['list'][$lable['idx']]['sub'][] = $contents;
+					}
 				}
 			}
 		}
@@ -46,7 +55,20 @@ class CertificateService extends BaseService
 
 		return $list;
 	}
-	
+
+	public function getWord($word_idx)
+	{
+		$word = self::$certificate->getWord($word_idx);
+
+		$word_data = $word[0];
+
+		return $word_data;
+	}
+
+	/**
+	 *	전체 단어 전제 내용
+	 *
+	 */
 	public function getWordContentAll()
 	{
 		$word_data = self::$certificate->getWordAll();
@@ -64,7 +86,7 @@ class CertificateService extends BaseService
 				$en_title = !empty($en_title) ? $word['abbreviation'].', '.$en_title : $word['abbreviation'];
 			}
 			
-			$title = $idx.'. ';
+			$title = sprintf('%03d', $idx).'. ';
 			if(isset($word['hangul']))
 			{
 				$title.= $word['hangul'];

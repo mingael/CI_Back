@@ -9,34 +9,55 @@ use Services\CertificateService;
 
 class CertificateController extends BaseController
 {
-	private static $certificate;
+	private static $service;
 
 	function __construct()
 	{
-		self::$certificate = new CertificateService();
+		self::$service = new CertificateService();
 	}
 
 	function __destruct()
 	{
 	}
 
+	/**
+	 *	과목 목록
+	 *
+	 */
 	public function getClassList()
 	{
-		$list_data = self::$certificate->getClassList();
+		$list_data = self::$service->getClassList();
 
 		echo json_encode($list_data);
 	}
 
-	public function getClassStudyContent($seg=false)
+	/**
+	 *	과목 주제별 내용
+	 *
+	 */
+	public function getClassStudyContent()
 	{
-		$list_data = self::$certificate->getClassStudyContent($seg);
+		$body = json_decode($this->request->getBody(), TRUE);
+		$list_data = self::$service->getClassStudyContent($body['class_idx']);
 
 		echo json_encode($list_data);
 	}
-	
+
+	public function getWord()
+	{
+		$body = json_decode($this->request->getBody(), TRUE);
+		$list_data = self::$service->getWord($body['word_idx']);
+
+		echo json_encode($list_data);
+	}
+
+	/**
+	 *	단어 전체
+	 *
+	 */
 	public function getWordAll()
 	{
-		$list_data = self::$certificate->getWordContentAll();
+		$list_data = self::$service->getWordContentAll();
 
 		echo json_encode($list_data);
 	}

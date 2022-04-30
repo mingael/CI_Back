@@ -33,11 +33,15 @@ $routes->setAutoRoute(true);
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index');
+$routes->get('dev', 'DevController::index');
 
 $routes->group('api', function($routes) {
 	$routes->add('/', 'ApiController::index');
+	$routes->add('auth/bad_ip', 'AuthController::checkBadIp');
+	$routes->add('auth/login', 'AuthController::login');
 	$routes->add('certificate/', 'CertificateController::getClassList');
 	$routes->add('certificate/study', 'CertificateController::getClassStudyContent');
+	$routes->add('certificate/word', 'CertificateController::getWord');
 	$routes->add('certificate/word_all', 'CertificateController::getWordAll');
 });
 
